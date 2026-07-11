@@ -46,6 +46,9 @@
     .nav button{color:#c6c6c6;padding:0 16px;min-height:40px;font-size:13px;letter-spacing:.01em}
     .nav button:hover{background:#262626;color:#fff}
     .nav button.active{background:#393939;color:#fff;box-shadow:inset 3px 0 0 var(--blue)}
+    .nav-group{color:#8d8d8d;font-size:10.5px;font-weight:600;letter-spacing:.08em;padding:16px 16px 6px;text-transform:uppercase}
+    .nav-group:first-child{padding-top:6px}
+    @media(max-width:1080px){.nav-group{display:none}}
     .nav button.active .badge{background:var(--blue);color:#fff}
     .badge{background:#525252;color:#f4f4f4;font-family:var(--mono);font-size:11px;padding:2px 7px}
 
@@ -130,7 +133,7 @@
     <main class="main">
       <header class="topbar">
         <div class="title"><h1 id="pageTitle">飯店 ERP 總覽</h1><p id="pageSub">以公開版模板展示飯店日結、City Ledger、OTA/信用卡、庫存耗用、AP、部門損益與三大報表。</p></div>
-        <div class="toolbar"><label class="role-switch"><span>物業</span><select id="propSelect" aria-label="切換物業"></select></label><label class="role-switch"><span>目前身分</span><select id="roleSelect" aria-label="切換操作身分"></select></label><button class="btn" id="resetBtn">重設資料</button><button class="btn primary" id="quickActionBtn">新增請購</button></div>
+        <div class="toolbar"><label class="role-switch"><span>物業</span><select id="propSelect" aria-label="切換物業"></select></label><label class="role-switch"><span>目前身分</span><select id="roleSelect" aria-label="切換操作身分"></select></label><button class="btn" id="resetBtn">重設資料</button><button class="btn" id="quickActionBtn">新增請購</button><button class="btn primary" id="createBtn">＋ 新增單據</button></div>
       </header>
       <div class="content">
         <section id="overview" class="section active"></section><section id="sync" class="section"></section><section id="finance" class="section"></section><section id="ar" class="section"></section><section id="ap" class="section"></section><section id="procure" class="section"></section><section id="inventory" class="section"></section><section id="cost" class="section"></section><section id="hr" class="section"></section><section id="reports" class="section"></section><section id="masters" class="section"></section><section id="plan" class="section"></section><section id="revrec" class="section"></section><section id="gl" class="section"></section><section id="close" class="section"></section><section id="control" class="section"></section><section id="stock" class="section"></section><section id="group" class="section"></section><section id="assets" class="section"></section><section id="flow" class="section"></section><section id="bi" class="section"></section><section id="hcm" class="section"></section><section id="tax" class="section"></section>
@@ -674,7 +677,17 @@ flowHistory:[
     function setPage(id){if(!rolePages().includes(id))id="overview";state.active=id;save();render()}
     function pageBadge(id){if(id=="overview")return roleTasks().length;if(id=="procure")return roleTasks().filter(x=>x.page=="procure").length;if(id=="ap")return state.supplierInv.filter(i=>["待三方比對","數量差異","金額差異","待財務主管核准"].includes(i.status)).length+state.ap.filter(a=>a[5]=="待付款").length;if(id=="inventory")return low().length;if(id=="reports")return 3;if(id=="revrec")return state.deferred.filter(d=>d.status!="已認列").length;if(id=="close")return state.periods.filter(p=>!p.locked).length;if(id=="stock"){let n=buildStockLedger().summary.filter(s=>s.slow).length;return n||""}return""}
     function st(s){let ok=["已收款","已付款","已驗收","已結案","已發料","已決選","已下單","已收貨","已過帳","比對通過","完成","正常","success","已正式發出","已認列","已關帳","硬關帳","啟用","已存證","累計比對通過","差異良好","帳齡正常","淨額一致","已入帳","已對帳入帳","已回收","已確認保留","二代健保已申報","未達門檻","已結帳","已提列","已完工","準備充足","生效中","優於預算","已計算","已上傳財政部","已申報"],bad=["逾期","bad","庫存不足","數量差異","金額差異","付款凍結","有驗收差異","發票差異","退回補件","呆滯","逾期未存證","累計比對差異","差異需調查","帳齡逾期","呆帳沖銷","淨額差異","駁回結案","逾門檻應扣","準備不足","逾時待升級","緊急","退回","低於預算","遲到","已作廢"],purple=["待核准","待部門主管核准","待採購經理核准","待比價","待決選","待決選確認","已決選待建單","待審核","待財務主管核准","候選供應商","自動加簽","已收回","規劃中","待生效","加簽","加班","已折讓"],warn=["草稿","待送審","待收款","待付款","待發票","待驗收","部分驗收","部分到貨","已收貨待發票","已收貨待比對","待三方比對","待發料","部分發料","需補貨","warning","待主管核准","待處理","待查看","已核准待採購","PO 草稿","待補貨","待認列","開帳中","軟關帳","待存證","即將逾期","部分驗收／部分開票","待累計比對","差異觀察","跨月時間差","待入帳","退回重做","使用中","待再認證","二代健保待申報","複核中","待沖銷","待提列","發包中","待簽核","升級","待計算","待上傳","待申報"];let c=ok.includes(s)?"ok":bad.includes(s)?"st-bad":purple.includes(s)?"purple":warn.includes(s)?"st-warn":"info";return`<span class="status ${c}"><span class="dot"></span>${h(s)}</span>`}
-    function nav(){let allowed=pages.filter(p=>rolePages().includes(p[0]));$("nav").innerHTML=allowed.map(p=>{let b=pageBadge(p[0]);return`<button class="${state.active==p[0]?"active":""}" data-page="${p[0]}"><span>${p[1]}</span><span>${pageNames[p[0]]||p[2]}</span>${b!==""?`<span class="badge">${b}</span>`:"<span></span>"}</button>`}).join("");document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>setPage(b.dataset.page))}
+    const navGroups=[
+      ["營運總覽",["overview","sync"]],
+      ["採購 · 庫存",["procure","inventory","stock"]],
+      ["財務會計",["finance","ar","ap","gl","revrec"]],
+      ["稅務 · 關帳 · 內控",["tax","close","control"]],
+      ["成本 · 報表",["cost","reports","bi"]],
+      ["集團 · 資產 · 人資",["group","assets","hcm","hr"]],
+      ["流程 · 主檔",["flow","masters","plan"]]
+    ];
+    function navBtn(id){let p=pages.find(x=>x[0]==id);if(!p)return"";let b=pageBadge(id);return`<button class="${state.active==id?"active":""}" data-page="${id}"><span>${p[1]}</span><span>${pageNames[id]||p[2]}</span>${b!==""?`<span class="badge">${b}</span>`:"<span></span>"}</button>`}
+    function nav(){let allowed=new Set(rolePages());let html=navGroups.map(g=>{let ids=g[1].filter(id=>allowed.has(id));return ids.length?`<div class="nav-group">${h(g[0])}</div>`+ids.map(navBtn).join(""):""}).join("");let grouped=new Set(navGroups.flatMap(g=>g[1]));let extra=[...allowed].filter(id=>!grouped.has(id)&&pages.find(p=>p[0]==id));if(extra.length)html+=`<div class="nav-group">其他</div>`+extra.map(navBtn).join("");$("nav").innerHTML=html;document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>setPage(b.dataset.page))}
     function propName(){if(!state.activeProperty||state.activeProperty=="ALL")return"全部物業";let p=(state.groupProps||[]).find(x=>x.id==state.activeProperty);return p?p.name:"全部物業"}
     function setProperty(id){state.activeProperty=id;save();render();toast(id=="ALL"?"已切換為全集團彙總檢視":"已切換為 "+propName()+" 單館檢視")}
     function header(){let r=role();$("pageTitle").textContent=isDemo()&&state.active=="overview"?"全角色控制台":pageNames[state.active]||"我的工作";$("pageSub").textContent=isDemo()&&state.active=="overview"?"六種角色待辦、十二個模組與完整單據鏈。":pageSubs[state.active]||r.scope;if(state.activeProperty&&state.activeProperty!="ALL")$("pageSub").textContent+="　·　檢視物業："+propName();let sel=$("roleSelect");sel.innerHTML=Object.entries(roleDefs).map(([k,v])=>`<option value="${k}">${v.title}｜${v.name}</option>`).join("");sel.value=state.role;sel.onchange=e=>setRole(e.target.value);let ps=$("propSelect");if(ps){ps.innerHTML='<option value="ALL">全部物業（集團）</option>'+(state.groupProps||[]).map(p=>`<option value="${p.id}">${h(p.name)}</option>`).join("");ps.value=state.activeProperty||"ALL";ps.onchange=e=>setProperty(e.target.value)}$("quickActionBtn").textContent=r.quick;$("quickActionBtn").onclick=roleQuickAction}
@@ -2388,7 +2401,19 @@ function hcmXSuppRatio(){var er=state.hcmEmployers||{};return er.suppBonusRatio|
       logAudit("代扣 "+b.name+" 單筆給付 "+money(b.amount)+" 二代健保補充保費 "+money(c.supp),doc);
       save();closeModal();render();toast(b.name+" 已代扣補充保費 "+money(c.supp)+" 並過帳");
     }
+    function openCreate(){var mk=(fn,title,desc,primary)=>`<button class="btn${primary?" primary":""}" style="display:block;text-align:left;height:auto;padding:12px 14px;white-space:normal" onclick="closeModal();${fn}">${title}<br><span class="muted" style="font-weight:400;font-size:11px">${desc}</span></button>`;
+      showModal("＋ 新增單據","請購與領料為需求起點；詢價、採購單、驗收、發票由 Procure-to-Pay 流程逐步轉入與過帳。",
+        `<div class="grid cols2">`
+        +mk("openNewPr()","請購單 PR","部門提出採購需求，主管簽核後轉詢價比價",1)
+        +mk("openNewStoreReq()","領料單","向中央倉領用庫存，庫存不足自動轉請購",1)
+        +mk("window.procTab='source';setPage('procure')","詢價單 RFQ","由已核准請購建立三家比價（採購經理）",0)
+        +mk("window.procTab='pr';setPage('procure')","採購單 PO ／ 驗收 GRN","由詢價決選與到貨驗收建立與過帳",0)
+        +mk("setPage('ar')","應收收款 ／ 開票","City Ledger、OTA、信用卡帳款登錄收款",0)
+        +mk("setPage('ap')","應付付款","供應商發票三方比對後付款過帳",0)
+        +`</div><div class="alert">飯店 Procure-to-Pay 閉環：領料 → 請購 PR → 詢價 RFQ → 採購單 PO → 驗收 GRN → 三方比對 → 應付 AP → 付款。每一步都是真實建立與過帳，並產生分錄與稽核軌跡。</div>`,
+        `<button class="btn" onclick="closeModal()">關閉</button>`);}
     $("resetBtn").onclick=()=>{localStorage.removeItem(KEY);state=structuredClone(seed);hydrateDemo(state);window.procTab="work";window.reportTab="pl";save();render();toast("Demo 資料已重設")};
+    $("createBtn").onclick=openCreate;
     $("closeModal").onclick=closeModal;
     $("modalBg").onclick=e=>{if(e.target==e.currentTarget)closeModal()};
     document.addEventListener("keydown",e=>{if(e.key=="Escape")closeModal()});
