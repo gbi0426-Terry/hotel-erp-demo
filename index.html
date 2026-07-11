@@ -28,14 +28,14 @@
         <div class="toolbar"><label class="role-switch"><span>目前身分</span><select id="roleSelect" aria-label="切換操作身分"></select></label><button class="btn" id="resetBtn">重設資料</button><button class="btn primary" id="quickActionBtn">新增請購</button></div>
       </header>
       <div class="content">
-        <section id="overview" class="section active"></section><section id="sync" class="section"></section><section id="finance" class="section"></section><section id="ar" class="section"></section><section id="ap" class="section"></section><section id="procure" class="section"></section><section id="inventory" class="section"></section><section id="cost" class="section"></section><section id="hr" class="section"></section><section id="reports" class="section"></section><section id="masters" class="section"></section><section id="plan" class="section"></section>
+        <section id="overview" class="section active"></section><section id="sync" class="section"></section><section id="finance" class="section"></section><section id="ar" class="section"></section><section id="ap" class="section"></section><section id="procure" class="section"></section><section id="inventory" class="section"></section><section id="cost" class="section"></section><section id="hr" class="section"></section><section id="reports" class="section"></section><section id="masters" class="section"></section><section id="plan" class="section"></section><section id="revrec" class="section"></section><section id="gl" class="section"></section><section id="close" class="section"></section><section id="control" class="section"></section><section id="stock" class="section"></section>
       </div>
     </main>
   </div>
   <div class="modal-bg" id="modalBg"><div class="modal"><div class="head"><div><h2 id="modalTitle">明細</h2><p id="modalSub">ERP 單據與來源資料勾稽。</p></div><button class="btn" id="closeModal">×</button></div><div class="body" id="modalBody"></div><div class="foot" id="modalFoot"></div></div></div>
   <div class="toast" id="toast"></div>
   <script>
-    const KEY="hotel-erp-public-template-hotel-data-v6";
+    const KEY="hotel-erp-public-template-hotel-data-v7";
     const seed={active:"overview",loopStep:0,lastSync:"2026-07-10 23:58",syncLog:[["IMPORT-20260710-001","VenueOS PMS 日結匯入",176,"warning","23:58","96 間住房、房租/餐飲/其他收入已進 ERP，現金短溢 NT$1,240 待覆核"],["IMPORT-20260710-CC","信用卡批次 / 收單檔",5,"warning","23:40","中國信託、LINE Pay 批次轉 Credit Card AR，T+2 入帳追蹤"],["IMPORT-20260710-OTA","OTA 平台撥款檔",64,"success","23:35","Booking.com、Agoda、Expedia 應撥款與佣金已對帳"],["IMPORT-20260710-FOLIO","Guest Folio 匯入",176,"success","23:30","Folio 轉入 City Ledger、OTA AR、Credit Card AR、Advance Deposit"],["IMPORT-20260710-CONS","房務/F&B/Minibar 耗用",312,"success","23:25","依 96 間住房扣房務備品、布草、早餐與 Minibar 庫存"]],ar:[["CL-2607-001","宏曜電子股份有限公司","Corporate City Ledger · CORP-HY2026 · 22 筆 Folio",208600,"2026-08-10",0,"INV-CL-260701","待付款"],["CL-2607-002","Booking.com","OTA AR · 平台撥款單 BKG-20260710 · 47 筆訂單",338500,"2026-07-15",0,"BKG-PAYOUT-20260710","待平台撥款"],["CL-2607-003","中國信託收單","Credit Card AR · 批次 CCB-20260710-03 · T+2",356780,"2026-07-12",0,"CCB-20260710-03","待請款入帳"],["CL-2607-004","山海旅遊","Travel Agent AR · TA-SH2026 · 11 筆 Folio",126400,"2026-06-30",10,"INV-TA-260612","逾期"],["CL-2607-005","官網訂金","Advance Deposit · WEB-DP · 41 筆訂金",84000,"2026-07-31",0,"DEP-202607","預收負債"],["CL-2607-006","沛辰顧問股份有限公司","Banquet AR · BANQ-PC2026 · 產品發表會",54800,"2026-07-25",0,"INV-BQ-260710","待開票"]],ap:[["AP-260711-006","昇禾用品","PO-260710-009 / GRN-260711-004 · 一次性拖鞋 520 雙",6240,"2026-07-25","待付款"],["AP-260710-011","青田咖啡","PO-260710-011 / GRN-260710-007 · 早餐咖啡豆 24 kg",13440,"2026-07-20","待付款"],["AP-260708-009","潔新洗滌","LIN-202607 月結洗滌單 · 床包/浴巾 438 kg",31536,"2026-07-18","待審核"],["AP-260707-012","豐泉飲品","PO-260707-012 / GRN-260708-006 · Minibar 補貨",9480,"2026-07-22","待付款"],["AP-260705-004","北區機電","MNT-260704-02 · 空調濾網與客房維修工資",13800,"2026-07-15","已付款"]],inv:[["HK-AMN-001","一次性拖鞋","Housekeeping Supplies",388,620,"雙",12,"昇禾用品"],["HK-AMN-002","牙刷組","Housekeeping Supplies",506,680,"組",8,"昇禾用品"],["HK-AMN-004","房務備品包","Housekeeping Supplies",144,220,"包",42,"昇禾用品"],["LIN-TWL-002","浴巾","Linen",1040,960,"條",68,"潔新洗滌"],["LIN-BED-004","床包","Linen",542,620,"件",96,"潔新洗滌"],["FB-BRK-003","早餐咖啡豆","F&B",9,20,"kg",560,"青田咖啡"],["FB-BRK-006","早餐蛋液","F&B",16,18,"桶",420,"晨光食品"],["MB-COL-001","Minibar 可樂","Minibar",82,140,"罐",22,"豐泉飲品"],["MB-WTR-002","Minibar 礦泉水","Minibar",260,320,"瓶",9,"豐泉飲品"],["MN-FLT-009","空調濾網","Maintenance",28,20,"片",180,"北區機電"]],req:[["PR-260710-003","一次性拖鞋",520,"雙","Housekeeping","已結案"],["PR-260710-004","牙刷組",460,"組","Housekeeping","已轉 PO"],["PR-260710-005","早餐咖啡豆",24,"kg","F&B","已結案"],["PR-260710-006","床包",160,"件","Linen","待核准"],["PR-260710-007","Minibar 可樂",96,"罐","Minibar","待核准"]],po:[["PO-260710-009","昇禾用品","一次性拖鞋",520,6240,"已驗收","2026-07-11"],["PO-260710-010","昇禾用品","牙刷組",460,3680,"已送出","2026-07-12"],["PO-260710-011","青田咖啡","早餐咖啡豆",24,13440,"已驗收","2026-07-10"],["PO-260707-012","豐泉飲品","Minibar 可樂/礦泉水",276,9480,"已驗收","2026-07-08"]],cost:[["Rooms 客房部",552960,79410,48600,31600,96000],["F&B 餐飲部",184320,0,67200,0,58000],["Banquet 宴會",68000,0,18400,0,22000],["Other Operated Departments",42680,0,12600,8800,7200],["Undistributed Expenses",0,0,0,0,138000]],emp:[["E01","陳美玲","Front Office","前台主管","月薪",46000,176,8],["E02","林志豪","Accounting","應收會計","月薪",42000,176,10],["E03","王淑芬","Housekeeping","房務領班","月薪",39000,176,12],["E04","阿珍","Housekeeping","房務員","時薪",210,168,6],["E05","Leo","F&B","餐飲主管","月薪",43000,176,10],["E06","阿凱","Engineering","工程技師","時薪",230,160,4]],customers:[["CORP-HY2026","宏曜電子股份有限公司","Corporate Account",22,208600,"City Ledger"],["OTA-BKG","Booking.com","OTA Channel",47,338500,"OTA AR"],["CC-CTBC","中國信託收單","Credit Card Acquirer",1,356780,"Credit Card AR"],["WEB-DP","官網訂金","Advance Deposit",41,84000,"預收負債"],["SUP-SH","昇禾用品","Supplier",4,6240,"AP / Procurement"]],tasks:[["確認 PMS / VenueOS 日結欄位","營業日、可售房、住房、房租、餐飲、其他收入、服務費、稅額、付款方式",true],["定義飯店 AR 類型","Corporate City Ledger、OTA AR、Credit Card AR、Travel Agent AR、Advance Deposit",true],["提供飯店庫存與耗用規則","房務備品、布草、F&B、Minibar、Maintenance，每住房耗用與安全庫存",false],["確認會計科目與成本中心","Rooms、F&B、Banquet、Other、Undistributed，對應三大報表",false]]};
     let state=load();
     const pages=[["overview","▣","飯店 ERP 總覽","保留原公開版模板，將資料改為飯店 Revenue to Cash、Procure to Pay、Inventory to Cost 與 GL 閉環。",""],["sync","⇄","PMS 日結匯入","VenueOS / PMS 日結、Folio、OTA、信用卡、房務耗用進 ERP。",""],["finance","▤","財務過帳與總帳","會計工作台：收入過帳、AR、AP、付款、收款與總帳分錄。",()=>openAr()+openAp()],["ar","AR","City Ledger / 通路應收","企業月結、OTA、信用卡、旅行社與預收訂金的飯店應收管理。",openAr],["ap","AP","供應商應付 AP","採購、洗滌、Minibar、維修與供應商發票形成 AP。",openAp],["procure","PO","飯店請購採購","房務、布草、F&B、Minibar 低庫存品項形成 PR / PO / GRN。",()=>state.req.filter(x=>x[5]!="待付款").length],["inventory","▥","飯店庫存與耗用","房務備品、布草、餐飲與 Minibar 用每住房耗用扣庫存。",()=>low().length],["cost","◈","部門損益 P&L","Rooms、F&B、Banquet、Other 與 Undistributed Expenses 管理損益。",""],["hr","HR","部門人事成本","前台、會計、房務、餐飲、工程人事成本分攤到成本中心。",()=>state.emp.length],["reports","表","三大會計報表","ERP 單據彙總產出損益表、資產負債表與現金流量表。","3"],["masters","主","飯店主檔","公司帳、通路、收單機構、供應商、品項與會計科目主檔。",""],["plan","☑","導入資料清單","第一階段需確認 PMS 匯入欄位、AR 類型、庫存耗用與會計科目。",()=>state.tasks.filter(x=>!x[2]).length]];
@@ -144,6 +144,104 @@
       ["付款與會計過帳","付款核准後沖銷 AP、更新銀行存款與現金流。","finance"]
     );
 
+    // ── Phase 2 上市櫃合規：IFRS 15 收入認列、總帳/關帳、內控 SoD ──
+    const complianceSeed={
+      deferred:[
+        {id:"CL-DEP-2607",type:"住房預收訂金",src:"官網訂金 WEB-DP · 41 筆",gross:84000,recognized:0,method:"入住日按住宿夜認列",acct:"2171 合約負債－預收房款",period:"2026-07",status:"待認列"},
+        {id:"CL-BQ-2607",type:"宴會預收訂金",src:"沛辰顧問 產品發表會 · BANQ-PC2026",gross:54800,recognized:0,method:"活動舉辦日一次認列",acct:"2171 合約負債－宴會",period:"2026-07",status:"待認列"},
+        {id:"CL-PKG-2607",type:"住宿套裝（含早餐/SPA）",src:"暑假親子套裝 · 68 筆",gross:129600,recognized:81000,method:"按住宿夜＋履約義務分攤",acct:"2171 合約負債－套裝",period:"2026-07",status:"認列中"},
+        {id:"CL-PTS-2607",type:"會員積分負債（重大權利）",src:"CHECK inn 會員點數 · 依獨立售價分攤",gross:46200,recognized:12800,method:"兌換或失效時認列",acct:"2172 合約負債－會員積分",period:"2026-07",status:"認列中"},
+        {id:"CL-GC-2607",type:"預售禮券",src:"企業禮券 · 未兌換餘額",gross:38000,recognized:9500,method:"兌換或依破損率(breakage)認列",acct:"2173 合約負債－禮券",period:"2026-07",status:"認列中"}
+      ],
+      periods:[
+        {period:"2026-05",status:"已關帳",closedBy:"周志遠 財務主管",closedAt:"2026-06-05 18:20",locked:true},
+        {period:"2026-06",status:"已關帳",closedBy:"周志遠 財務主管",closedAt:"2026-07-05 17:40",locked:true},
+        {period:"2026-07",status:"開帳中",closedBy:"",closedAt:"",locked:false}
+      ],
+      closeChecklist:[
+        ["銀行對帳單勾稽","5 家銀行／收單機構 T+2 入帳全數勾稽",true,"林志豪 應收會計"],
+        ["AR／AP 帳齡覆核","City Ledger、OTA、供應商應付帳齡確認",true,"林志豪 應收會計"],
+        ["存貨盤點與差異調整","5 倉別月底盤點，差異已調整分錄",false,"張志明 倉管"],
+        ["IFRS 15 合約負債認列","預收訂金、套裝、會員積分本期認列",false,"周志遠 財務主管"],
+        ["固定資產折舊提列","FF&E 與建物本期折舊分錄",false,"周志遠 財務主管"],
+        ["傳票借貸平衡檢查","本期傳票借方＝貸方、無單邊分錄",true,"系統"],
+        ["部門損益與 GOP 覆核","USALI 部門損益與未分攤費用結轉",false,"周志遠 財務主管"]
+      ],
+      audit:[
+        ["2026-07-11 11:05","林志豪","應付會計","登錄供應商發票 SH0711-0886","INV-SH-20260711","10.20.4.08"],
+        ["2026-07-11 10:32","黃怡君","採購經理","發出採購單並鎖定金額","PO-260710-010","10.20.3.22"],
+        ["2026-07-11 09:46","陳美玲","房務經理","核准請購 520 雙","PR-260710-003","10.20.3.15"],
+        ["2026-07-10 17:40","周志遠","財務主管","關帳鎖定期間 2026-06","PERIOD-202606","10.20.1.02"],
+        ["2026-07-10 15:20","林志豪","應付會計","嘗試修改已鎖定傳票被系統拒絕","JV-260630-118","10.20.4.08"]
+      ],
+      ledgerHist:[
+        {jv:"JV-260630-140",date:"2026-06-30",memo:"6 月合約負債認列客房收入",debit:"2171 合約負債－預收房款",credit:"4101 客房收入",amount:158000,period:"2026-06",locked:true,reversed:false},
+        {jv:"JV-260630-118",date:"2026-06-30",memo:"6 月房務備品耗用結轉",debit:"5101 客房備品費用",credit:"1131 房務備品存貨",amount:214500,period:"2026-06",locked:true,reversed:false},
+        {jv:"JV-260630-092",date:"2026-06-30",memo:"6 月折舊提列（FF&E／建物）",debit:"6301 折舊費用",credit:"1521 累計折舊",amount:386000,period:"2026-06",locked:true,reversed:false}
+      ],
+      authMatrix:[
+        ["請購 PR","≤ NT$50,000","部門主管","王淑芬 房務領班→經理"],
+        ["請購 PR","NT$50,001–200,000","部門主管＋採購經理","黃怡君 採購經理"],
+        ["請購 PR","> NT$200,000","採購經理＋財務主管","周志遠 財務主管"],
+        ["採購 PO","≤ NT$100,000","採購經理","黃怡君 採購經理"],
+        ["採購 PO","> NT$100,000","採購經理＋財務主管","周志遠 財務主管"],
+        ["付款","≤ NT$100,000","財務主管","周志遠 財務主管"],
+        ["付款","> NT$100,000","財務主管＋總經理","總經理"]
+      ],
+      sodRules:[
+        ["申請與核准分離","請購申請人不得核准自己的請購單","啟用"],
+        ["採購與驗收分離","建立 PO 的採購人員不得執行到貨驗收","啟用"],
+        ["驗收與付款分離","倉管驗收人員不得執行付款作業","啟用"],
+        ["發票登錄與付款核准分離","登錄發票的會計不得同時核准付款","啟用"],
+        ["請款與收款分離","開立請款人員不得登錄收款沖銷","啟用"]
+      ],
+      controlCycles:[
+        ["銷售及收款循環","Folio → City Ledger／OTA／信用卡 AR → 發票 → 收款 → 沖銷","職能分離、發票字軌控管、帳齡覆核","ar"],
+        ["採購及付款循環","領料 → PR → RFQ → PO → GRN → 三方比對 → AP → 付款","授權分級、三方比對、付款雙簽","procure"],
+        ["薪工循環","出勤 → 工時 → 薪資試算 → 應付薪資 → 撥付","計算與覆核分工、成本中心分攤","hr"],
+        ["存貨循環","入庫 → 每住房耗用 → 盤點 → 評價","盤點差異覆核、成本結轉","inventory"],
+        ["不動產（固定資產）循環","請購 → 資本化 → 折舊 → 減損 → 處分","資產編號、折舊複核、處分核准（Phase 3）","cost"],
+        ["融資及投資循環","資金調度、投資決策、關係人交易","董事會授權、關係人揭露、合併沖銷（Phase 3）","reports"]
+      ]
+    };
+    Object.assign(seed,structuredClone(complianceSeed));
+    Object.keys(complianceSeed).forEach(k=>{if(!state[k])state[k]=structuredClone(complianceSeed[k])});
+    pages.push(
+      ["revrec","¤","IFRS 收入認列","IFRS 15 合約負債：預收訂金、住宿套裝、會員積分與禮券的遞延與逐期認列。",""],
+      ["gl","簿","總帳與傳票","傳票借貸過帳、關帳鎖定與紅字沖銷，示範傳票不可竄改。",""],
+      ["close","鎖","關帳中心","期間關帳檢核、鎖定與稽核軌跡（ITGC 一般控制）。",""],
+      ["control","盾","內控與職能分工","授權分級矩陣、SoD 職能分離與內控交易循環對映。",""]
+    );
+
+    // ── 旅館版進銷存：進(採購入庫)＋銷(銷貨/耗用出庫)＋存(移動平均、異動明細帳、調撥、週轉) ──
+    const stockSeed={
+      stockCover:["HK-AMN-001","MB-COL-001","FB-BRK-003","LIN-BED-004","MN-FLT-009","MB-WTR-002"],
+      stockOpen:{
+        "HK-AMN-001":{qty:60,cost:12,wh:"中央倉",cat:"Housekeeping Supplies",inv:"1131 房務備品存貨"},
+        "MB-COL-001":{qty:100,cost:22,wh:"Minibar 倉",cat:"Minibar",inv:"1133 Minibar 商品存貨"},
+        "FB-BRK-003":{qty:20,cost:560,wh:"餐飲乾貨倉",cat:"F&B",inv:"1132 餐飲原料存貨"},
+        "LIN-BED-004":{qty:600,cost:96,wh:"布草倉",cat:"Linen",inv:"1134 布草存貨"},
+        "MN-FLT-009":{qty:30,cost:180,wh:"工程備品倉",cat:"Maintenance",inv:"1135 工程備品存貨"},
+        "MB-WTR-002":{qty:300,cost:9,wh:"Minibar 倉",cat:"Minibar",inv:"1133 Minibar 商品存貨"}
+      },
+      stockTxns:[
+        {date:"2026-07-11",doc:"GRN-260711-004",type:"進貨",sku:"HK-AMN-001",wh:"中央倉",qty:520,unit:12,batch:"SH-A0711",expiry:"—",note:"昇禾用品驗收入庫"},
+        {date:"2026-07-11",doc:"SR-260711-018",type:"領料",sku:"HK-AMN-001",wh:"中央倉",qty:-192,note:"96 房×2 雙 房務發料"},
+        {date:"2026-07-08",doc:"GRN-260708-006",type:"進貨",sku:"MB-COL-001",wh:"Minibar 倉",qty:276,unit:20,batch:"FQ-0708",expiry:"2026-12-31",note:"豐泉飲品補貨（進價 20）"},
+        {date:"2026-07-10",doc:"SO-260710-051",type:"銷貨",sku:"MB-COL-001",wh:"Minibar 倉",qty:-294,note:"7/01–7/10 Minibar 可樂銷售出庫"},
+        {date:"2026-07-10",doc:"GRN-260710-007",type:"進貨",sku:"FB-BRK-003",wh:"餐飲乾貨倉",qty:22,unit:545,batch:"QT-0710",expiry:"2026-10-31",note:"青田咖啡實收 22kg（進價 545）"},
+        {date:"2026-07-11",doc:"CONS-2607-BF",type:"耗用",sku:"FB-BRK-003",wh:"餐飲乾貨倉",qty:-33,note:"早餐咖啡吧耗用"},
+        {date:"2026-07-09",doc:"SR-260709-012",type:"領料",sku:"LIN-BED-004",wh:"布草倉",qty:-58,note:"樓層汰換破損床包"},
+        {date:"2026-07-04",doc:"WO-260704-02",type:"領料",sku:"MN-FLT-009",wh:"工程備品倉",qty:-2,note:"空調保養領用（低週轉）"},
+        {date:"2026-07-06",doc:"TRF-260706-003",type:"調撥出",sku:"MB-WTR-002",wh:"中央倉",qty:-60,note:"中央倉 → Minibar 倉 補貨調撥"},
+        {date:"2026-07-06",doc:"TRF-260706-003",type:"調撥入",sku:"MB-WTR-002",wh:"Minibar 倉",qty:60,note:"Minibar 倉 收到調撥"},
+        {date:"2026-07-10",doc:"SO-260710-052",type:"銷貨",sku:"MB-WTR-002",wh:"Minibar 倉",qty:-40,note:"Minibar 礦泉水銷售出庫"}
+      ]
+    };
+    Object.assign(seed,structuredClone(stockSeed));
+    Object.keys(stockSeed).forEach(k=>{if(state[k]==null)state[k]=structuredClone(stockSeed[k])});
+    pages.push(["stock","存","進銷存","進貨入庫、銷貨/耗用出庫、庫存異動明細帳、移動平均成本、調撥與週轉率。",""]);
+
     function st(s){let ok=["已收款","已付款","已驗收","已結案","已發料","已決選","已下單","已收貨","已過帳","比對通過","完成","正常","success"],bad=["逾期","bad","庫存不足","數量差異","金額差異","付款凍結","有驗收差異","發票差異","退回補件"],purple=["待核准","待部門主管核准","待採購經理核准","待比價","待決選","待審核"],warn=["待收款","待付款","待發票","待驗收","部分驗收","部分到貨","已收貨待發票","已收貨待比對","待三方比對","待發料","需補貨","warning","待主管核准","待處理"];let c=ok.includes(s)?"ok":bad.includes(s)?"st-bad":purple.includes(s)?"purple":warn.includes(s)?"st-warn":"info";return`<span class="status ${c}"><span class="dot"></span>${s}</span>`}
     function getInv(sku){return state.inv.find(x=>x[0]==sku)}
     function getPr(id){return state.req.find(x=>x.id==id)}
@@ -206,13 +304,13 @@
       demo:{short:"全",name:"跨角色展示",title:"Demo 全角色",dept:"All Departments",scope:"完整模組與跨角色待辦",pages:pages.map(x=>x[0]),quick:"開啟全流程"},
       requester:{short:"房",name:"王淑芬",title:"房務領班",dept:"Housekeeping",scope:"領料、請購與補件",pages:["overview","procure","inventory"],quick:"新增請購"},
       manager:{short:"主",name:"陳美玲",title:"房務經理",dept:"Housekeeping / Linen",scope:"部門預算與請購簽核",pages:["overview","procure","inventory","cost"],quick:"待我簽核"},
-      buyer:{short:"採",name:"黃怡君",title:"採購經理",dept:"Purchasing",scope:"詢價、比價與採購單",pages:["overview","procure","inventory","masters"],quick:"採購工作"},
-      warehouse:{short:"倉",name:"張志明",title:"中央倉管員",dept:"Warehouse",scope:"發料、驗收與退貨",pages:["overview","procure","inventory"],quick:"待驗收"},
-      finance:{short:"財",name:"林志豪",title:"應付會計",dept:"Accounting",scope:"發票比對、付款與過帳",pages:["overview","finance","ar","ap","procure","reports"],quick:"發票與付款"},
-      executive:{short:"總",name:"周志遠",title:"財務主管",dept:"Management",scope:"成本、現金與財務報表",pages:["overview","finance","ap","cost","reports","plan"],quick:"查看報表"}
+      buyer:{short:"採",name:"黃怡君",title:"採購經理",dept:"Purchasing",scope:"詢價、比價與採購單",pages:["overview","procure","inventory","stock","masters"],quick:"採購工作"},
+      warehouse:{short:"倉",name:"張志明",title:"中央倉管員",dept:"Warehouse",scope:"發料、驗收、出庫與調撥",pages:["overview","procure","inventory","stock"],quick:"待驗收"},
+      finance:{short:"財",name:"林志豪",title:"應付會計",dept:"Accounting",scope:"發票比對、付款、收入認列與過帳",pages:["overview","finance","ar","ap","procure","stock","revrec","gl","reports"],quick:"發票與付款"},
+      executive:{short:"總",name:"周志遠",title:"財務主管",dept:"Management",scope:"成本、現金、合規與財務報表",pages:["overview","finance","ap","cost","stock","revrec","gl","close","control","reports","plan"],quick:"查看報表"}
     };
-    const pageNames={overview:"我的工作",sync:"PMS 資料匯入",finance:"會計工作台",ar:"通路與企業應收",ap:"發票與付款",procure:"領料與採購",inventory:"庫存查詢",cost:"部門損益",hr:"人事成本",reports:"財務報表",masters:"供應商與品項",plan:"導入資料"};
-    const pageSubs={overview:"依目前身分顯示待辦、退回補件與例外單據。",finance:"收付款、傳票與來源單據勾稽。",ar:"企業月結、OTA、信用卡與旅行社帳款。",ap:"供應商發票、三方比對、付款核准與過帳。",procure:"部門領料、請購簽核、詢價、採購單與到貨驗收。",inventory:"依倉別查看現有量、安全量、在途量與補貨狀態。",cost:"依 Rooms、F&B、Banquet 與共同費用查看部門損益。",reports:"損益表、資產負債表與現金流量表。",masters:"供應商、品項、付款條件與合格規格主檔。",plan:"系統導入前需確認的資料與責任人。"};
+    const pageNames={overview:"我的工作",sync:"PMS 資料匯入",finance:"會計工作台",ar:"通路與企業應收",ap:"發票與付款",procure:"領料與採購",inventory:"庫存查詢",cost:"部門損益",hr:"人事成本",reports:"財務報表",masters:"供應商與品項",plan:"導入資料",revrec:"IFRS 收入認列",gl:"總帳與傳票",close:"關帳中心",control:"內控與 SoD",stock:"進銷存"};
+    const pageSubs={overview:"依目前身分顯示待辦、退回補件與例外單據。",finance:"收付款、傳票與來源單據勾稽。",ar:"企業月結、OTA、信用卡與旅行社帳款。",ap:"供應商發票、三方比對、付款核准與過帳。",procure:"部門領料、請購簽核、詢價、採購單與到貨驗收。",inventory:"依倉別查看現有量、安全量、在途量與補貨狀態。",cost:"依 Rooms、F&B、Banquet 與共同費用查看部門損益。",reports:"損益表、資產負債表與現金流量表。",masters:"供應商、品項、付款條件與合格規格主檔。",plan:"系統導入前需確認的資料與責任人。",revrec:"IFRS 15 合約負債與收入認列：訂金、套裝、會員積分與禮券。",gl:"傳票借貸過帳、關帳鎖定與紅字沖銷，傳票不可竄改。",close:"期間關帳檢核、鎖定與稽核軌跡（ITGC）。",control:"授權分級矩陣、SoD 職能分離與內控交易循環對映。",stock:"進貨入庫、銷貨/耗用出庫、庫存異動明細帳、移動平均成本、倉間調撥與庫存週轉率。"};
 
     function hydrateDemo(target){
       target.role=target.role||"demo";
@@ -241,11 +339,11 @@
     function actorName(id){return isDemo()?(roleDefs[id]?.name||role().name):role().name}
     function setRole(id){if(!roleDefs[id])return;state.role=id;state.active="overview";window.procTab="work";save();render();toast(`已切換為 ${roleDefs[id].title} ${roleDefs[id].name}`)}
     function setPage(id){if(!rolePages().includes(id))id="overview";state.active=id;save();render()}
-    function pageBadge(id){if(id=="overview")return roleTasks().length;if(id=="procure")return roleTasks().filter(x=>x.page=="procure").length;if(id=="ap")return state.supplierInv.filter(i=>["待三方比對","數量差異","金額差異","待財務主管核准"].includes(i.status)).length+state.ap.filter(a=>a[5]=="待付款").length;if(id=="inventory")return low().length;if(id=="reports")return 3;return""}
-    function st(s){let ok=["已收款","已付款","已驗收","已結案","已發料","已決選","已下單","已收貨","已過帳","比對通過","完成","正常","success","已正式發出"],bad=["逾期","bad","庫存不足","數量差異","金額差異","付款凍結","有驗收差異","發票差異","退回補件"],purple=["待核准","待部門主管核准","待採購經理核准","待比價","待決選","待決選確認","已決選待建單","待審核","待財務主管核准","候選供應商"],warn=["草稿","待送審","待收款","待付款","待發票","待驗收","部分驗收","部分到貨","已收貨待發票","已收貨待比對","待三方比對","待發料","部分發料","需補貨","warning","待主管核准","待處理","待查看","已核准待採購","PO 草稿","待補貨"];let c=ok.includes(s)?"ok":bad.includes(s)?"st-bad":purple.includes(s)?"purple":warn.includes(s)?"st-warn":"info";return`<span class="status ${c}"><span class="dot"></span>${h(s)}</span>`}
+    function pageBadge(id){if(id=="overview")return roleTasks().length;if(id=="procure")return roleTasks().filter(x=>x.page=="procure").length;if(id=="ap")return state.supplierInv.filter(i=>["待三方比對","數量差異","金額差異","待財務主管核准"].includes(i.status)).length+state.ap.filter(a=>a[5]=="待付款").length;if(id=="inventory")return low().length;if(id=="reports")return 3;if(id=="revrec")return state.deferred.filter(d=>d.status!="已認列").length;if(id=="close")return state.periods.filter(p=>!p.locked).length;if(id=="stock"){let n=buildStockLedger().summary.filter(s=>s.slow).length;return n||""}return""}
+    function st(s){let ok=["已收款","已付款","已驗收","已結案","已發料","已決選","已下單","已收貨","已過帳","比對通過","完成","正常","success","已正式發出","已認列","已關帳","啟用"],bad=["逾期","bad","庫存不足","數量差異","金額差異","付款凍結","有驗收差異","發票差異","退回補件","呆滯"],purple=["待核准","待部門主管核准","待採購經理核准","待比價","待決選","待決選確認","已決選待建單","待審核","待財務主管核准","候選供應商"],warn=["草稿","待送審","待收款","待付款","待發票","待驗收","部分驗收","部分到貨","已收貨待發票","已收貨待比對","待三方比對","待發料","部分發料","需補貨","warning","待主管核准","待處理","待查看","已核准待採購","PO 草稿","待補貨","待認列","開帳中"];let c=ok.includes(s)?"ok":bad.includes(s)?"st-bad":purple.includes(s)?"purple":warn.includes(s)?"st-warn":"info";return`<span class="status ${c}"><span class="dot"></span>${h(s)}</span>`}
     function nav(){let allowed=pages.filter(p=>rolePages().includes(p[0]));$("nav").innerHTML=allowed.map(p=>{let b=pageBadge(p[0]);return`<button class="${state.active==p[0]?"active":""}" data-page="${p[0]}"><span>${p[1]}</span><span>${pageNames[p[0]]||p[2]}</span>${b!==""?`<span class="badge">${b}</span>`:"<span></span>"}</button>`}).join("");document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>setPage(b.dataset.page))}
     function header(){let r=role();$("pageTitle").textContent=isDemo()&&state.active=="overview"?"全角色控制台":pageNames[state.active]||"我的工作";$("pageSub").textContent=isDemo()&&state.active=="overview"?"六種角色待辦、十二個模組與完整單據鏈。":pageSubs[state.active]||r.scope;let sel=$("roleSelect");sel.innerHTML=Object.entries(roleDefs).map(([k,v])=>`<option value="${k}">${v.title}｜${v.name}</option>`).join("");sel.value=state.role;sel.onchange=e=>setRole(e.target.value);$("quickActionBtn").textContent=r.quick;$("quickActionBtn").onclick=roleQuickAction}
-    function render(){if(!rolePages().includes(state.active))state.active="overview";nav();header();document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));$(state.active).classList.add("active");overview();sync();finance();ar();ap();procure();inventory();cost();hr();reports();masters();plan()}
+    function render(){if(!rolePages().includes(state.active))state.active="overview";nav();header();document.querySelectorAll(".section").forEach(s=>s.classList.remove("active"));$(state.active).classList.add("active");overview();sync();finance();ar();ap();procure();inventory();cost();hr();reports();masters();plan();revrecPage();glPage();closePage();controlPage();stockPage()}
     function roleQuickAction(){if(isDemo()){window.procTab="work";return setPage("procure")}if(isRole("requester"))return openNewPr();if(isRole("manager")){window.procTab="pr";return setPage("procure")}if(isRole("buyer")){window.procTab="source";return setPage("procure")}if(isRole("warehouse")){window.procTab="receive";return setPage("procure")}if(isRole("finance")){return setPage("ap")}return setPage("reports")}
     function taskData(status,title,sub,action,label,page="procure",when="今日",owner=""){return{status,title,sub,action,label,page,when,owner}}
     function demoTasks(){let out=[];
@@ -375,6 +473,159 @@
     function openNewPrForSku(sku){window.newPrSku=sku;openNewPr();window.newPrSku=""}
     function reqFrom(sku){if(!isRole("requester"))return toast("補貨建議需由部門申請人建立請購");openNewPrForSku(sku)}
     function inventory(){let rows=state.inv.map(x=>{let open=state.req.find(r=>r.item.sku==x[0]&&!['已結案','退回補件'].includes(r.status)),action=open?`<button class="btn small" onclick="openPr('${open.id}')">查看 ${open.id}</button>`:isRole("requester")&&["Housekeeping Supplies","Linen"].includes(x[2])?`<button class="btn small primary" onclick="openNewPrForSku('${x[0]}')">新增請購</button>`:"";return[x[0],x[1],x[2],x[3]+" "+x[5],x[4]+" "+x[5],onOrder(x[0])+" "+x[5],money(x[3]*x[6]),st(x[3]<x[4]?"需補貨":"正常"),action]});$("inventory").innerHTML=`<div class="grid cols4">${metric("庫存估值",money(invVal()),"資產負債表存貨","up","reports")}${metric("低安全庫存",low().length+" 項","依安全量與在途量判斷","bad")}${metric("已收貨未到發票",money(grirAmt()),"驗收已過帳、發票未登錄","warn","finance")}${metric("待驗收採購單",state.po.filter(p=>["待驗收","部分驗收"].includes(p.status)).length+" 張","由倉管辦理到貨驗收","warn","procure")}</div><div class="card"><div class="head"><div><h2>飯店多倉庫存</h2><p>中央倉、餐飲倉、Minibar 倉與工程倉。</p></div></div>${table(["SKU","品項","分類","現有","安全量","在途","庫存估值","狀態","操作"],rows)}</div>`}
+    // ── Phase 2 合規模組 ──
+    function logAudit(action,target){state.audit.unshift([nowStamp(),role().name,role().title,action,target,"10.20.1.02"])}
+
+    function deferredBal(){return state.deferred.reduce((s,d)=>s+(d.gross-d.recognized),0)}
+    function deferredRec(){return state.deferred.reduce((s,d)=>s+d.recognized,0)}
+    function revrecPage(){
+      let pts=state.deferred.find(d=>d.id=="CL-PTS-2607"),ptsBal=pts?pts.gross-pts.recognized:0;
+      let rows=state.deferred.map(d=>{let bal=d.gross-d.recognized,pct=Math.round(d.recognized/d.gross*100);
+        let action=`<button class="btn small" onclick="openDeferred('${d.id}')">明細</button>`+(d.status!="已認列"&&isRole("finance","executive")?` <button class="btn small primary" onclick="recognizeDeferred('${d.id}')">本期認列</button>`:"");
+        return [d.id,h(d.type),money(d.gross),money(d.recognized)+` <span class="muted">(${pct}%)</span>`,money(bal),h(d.method),st(d.status),action]});
+      $("revrec").innerHTML=`<div class="grid cols4">${metric("合約負債餘額",money(deferredBal()),"遞延收入（列資產負債表負債）","warn")}${metric("本期已認列收入",money(deferredRec()),"轉入損益表營業收入","up")}${metric("會員積分負債",money(ptsBal),"IFRS 15「重大權利」遞延","info")}${metric("待認列項目",state.deferred.filter(d=>d.status!="已認列").length+" 項","關帳前須完成認列","warn","close")}</div>`
+        +`<div class="card"><div class="head"><div><h2>IFRS 15 合約負債與收入認列</h2><p>訂金、套裝、會員積分、禮券先列合約負債（遞延），於履約（入住／兌換）時按五步驟認列收入。</p></div></div>`
+        +`<div class="alert">IFRS 15 五步驟：辨認合約 → 辨認履約義務 → 決定交易價格 → 分攤交易價格 → 履約時認列收入。住房服務屬「一段期間內」履約，按住宿夜逐日認列；會員積分屬「重大權利」須按獨立售價比例分攤並遞延。</div>`
+        +table(["合約負債單號","類型","交易總額","已認列","未認列餘額","認列方式","狀態","操作"],rows)+`</div>`;
+    }
+    function openDeferred(id){let d=state.deferred.find(x=>x.id==id);if(!d)return;let bal=d.gross-d.recognized;let step=bal>0?(d.type.includes("訂金")||d.type.includes("宴會")?bal:Math.round(bal*0.4)):0;
+      showModal(`${id} · 合約負債明細`,`${d.type}｜${d.src}`,
+        `<div class="doc-summary"><div><span>交易總額</span><strong>${money(d.gross)}</strong></div><div><span>已認列收入</span><strong>${money(d.recognized)}</strong></div><div><span>未認列餘額</span><strong>${money(bal)}</strong></div><div><span>認列科目</span><strong>${h(d.acct)}</strong></div></div>`
+        +`<dl class="kv"><dt>認列方式</dt><dd>${h(d.method)}</dd><dt>會計期間</dt><dd>${d.period}</dd><dt>狀態</dt><dd>${st(d.status)}</dd></dl>`
+        +`<div class="alert">本期認列分錄（履約時）：<br>借　${h(d.acct)}　${money(step)}<br>貸　4101 客房／服務收入　${money(step)}</div>`,
+        `<button class="btn" onclick="closeModal()">關閉</button>${d.status!="已認列"&&isRole("finance","executive")?`<button class="btn primary" onclick="closeModal();recognizeDeferred('${id}')">執行本期認列</button>`:""}`);
+    }
+    function recognizeDeferred(id){if(!isRole("finance","executive"))return toast("僅會計／財務主管可執行收入認列");
+      let d=state.deferred.find(x=>x.id==id);if(!d)return;let bal=d.gross-d.recognized;if(bal<=0)return toast("已無未認列餘額");
+      let amt=d.type.includes("訂金")||d.type.includes("宴會")?bal:Math.round(bal*0.4);
+      d.recognized+=amt;if(d.gross-d.recognized<=0){d.recognized=d.gross;d.status="已認列"}else d.status="認列中";
+      addJournal("REV-"+id,d.type+" 收入認列",d.acct,"4101 客房／服務收入",amt);
+      logAudit("執行 IFRS 15 收入認列 "+money(amt),id);save();render();toast(`${id} 本期認列收入 ${money(amt)}，已產生分錄`);
+    }
+
+    function jvPeriod(dt){return String(dt).length>5?String(dt).slice(0,7):"2026-"+String(dt).slice(0,2)}
+    function glList(){
+      let cur=state.journal.map((j,i)=>{let per=jvPeriod(j.date);return {jv:"JV-2607-"+String(i+1).padStart(3,"0"),date:j.date,memo:j.memo,debit:j.debit,credit:j.credit,amount:j.amount,period:per,locked:state.periods.some(p=>p.locked&&p.period==per),reversed:false}});
+      return [...cur,...state.ledgerHist];
+    }
+    function glPage(){
+      let all=glList(),tot=all.reduce((s,j)=>s+j.amount,0);
+      let rows=all.map(j=>[j.jv,String(j.date).length>5?String(j.date).slice(5):j.date,h(j.memo),j.debit,j.credit,money(j.amount),j.period,(j.locked?st("已鎖定")+" 🔒":st("已過帳"))+(j.reversed?" <span class='muted'>已沖銷</span>":""),`<button class="btn small" onclick="openJournal('${j.jv}')">檢視</button>`]);
+      $("gl").innerHTML=`<div class="grid cols4">${metric("本期傳票",state.journal.length+" 張","期間 2026-07 開帳中","info","close")}${metric("借貸合計",money(tot),"借方＝貸方，分錄平衡","up")}${metric("已關帳鎖定",all.filter(j=>j.locked).length+" 張","不可修改，更正須紅字沖銷","warn")}${metric("紅字沖銷",all.filter(j=>String(j.jv).endsWith("-R")).length+" 張","保留原分錄留痕","info")}</div>`
+        +`<div class="card"><div class="head"><div><h2>總帳傳票（不可竄改）</h2><p>過帳後分錄不可直接覆寫；已關帳期間鎖定，更正一律以紅字沖銷產生反向分錄並留存軌跡。</p></div></div>`
+        +`<div class="alert">ITGC 控制：傳票過帳後鎖定，已關帳期間（2026-05、2026-06）之傳票禁止異動；任何更正以「紅字沖銷（reversing entry）」處理，原始分錄永久保留，符合商業會計法憑證不可竄改與帳簿 10 年保存要求。</div>`
+        +table(["傳票號","日期","摘要","借方科目","貸方科目","金額","期間","狀態","操作"],rows)+`</div>`;
+    }
+    function openJournal(jv){let j=glList().find(x=>x.jv==jv);if(!j)return;
+      let body=`<div class="doc-summary"><div><span>傳票號</span><strong>${j.jv}</strong></div><div><span>日期</span><strong>${j.date}</strong></div><div><span>期間</span><strong>${j.period}</strong></div><div><span>狀態</span><strong>${j.locked?"已關帳鎖定 🔒":"已過帳"}</strong></div></div>`
+        +table(["借／貸","科目","金額"],[["借",j.debit,money(j.amount)],["貸",j.credit,money(j.amount)]])
+        +(j.locked?`<div class="alert bad">此傳票所屬期間（${j.period}）已關帳鎖定，不可直接修改或刪除。如需更正，請以紅字沖銷產生反向分錄。</div>`:`<div class="alert">開帳中期間之傳票更正仍須留存軌跡，系統不允許直接覆寫。</div>`);
+      let foot=`<button class="btn" onclick="closeModal()">關閉</button><button class="btn" onclick="tryEditJournal('${j.jv}')">嘗試修改</button>`+(j.locked&&!j.reversed&&!String(j.jv).endsWith("-R")?`<button class="btn danger" onclick="reverseJournal('${j.jv}')">紅字沖銷</button>`:"");
+      showModal(`${jv} · 傳票明細`,h(j.memo),body,foot);
+    }
+    function tryEditJournal(jv){logAudit("嘗試修改已過帳傳票被系統拒絕",jv);save();render();toast("已過帳傳票不可覆寫：系統已擋下並寫入稽核軌跡")}
+    function reverseJournal(jv){let j=state.ledgerHist.find(x=>x.jv==jv);if(!j)return toast("僅已關帳鎖定之傳票需以紅字沖銷更正");if(j.reversed)return toast("此傳票已沖銷");
+      j.reversed=true;
+      state.ledgerHist.unshift({jv:jv+"-R",date:"2026-07-11",memo:"紅字沖銷："+j.memo,debit:j.credit,credit:j.debit,amount:j.amount,period:"2026-07",locked:false,reversed:false});
+      logAudit("紅字沖銷傳票 "+money(j.amount),jv);save();closeModal();render();toast(`已對 ${jv} 產生紅字沖銷分錄，原分錄保留`);
+    }
+
+    function closePage(){
+      let open=state.periods.find(p=>!p.locked),done=state.closeChecklist.filter(c=>c[2]).length,total=state.closeChecklist.length;
+      let prows=state.periods.map(p=>[p.period,p.locked?st("已關帳")+" 🔒":st("開帳中"),h(p.closedBy||"—"),p.closedAt||"—",p.locked?`<span class="muted">已鎖定</span>`:(isRole("executive")?`<button class="btn small primary" onclick="lockPeriod('${p.period}')">關帳鎖定</button>`:`<span class="role-only-note">限財務主管關帳</span>`)]);
+      let crows=state.closeChecklist.map((c,i)=>`<label class="checkline"><input type="checkbox" ${c[2]?"checked":""} onchange="toggleCheck(${i})"><span><strong>${h(c[0])}</strong>　${h(c[1])}<br><span class="muted">負責：${h(c[3])}</span></span></label>`).join("");
+      let arows=state.audit.map(a=>`<div class="audit-row"><span>${h(a[0])}</span><div><strong>${h(a[1])}　${h(a[2])}</strong><br>${h(a[3])}　·　<span class="muted">${h(a[4])}</span></div><span>${h(a[5])}</span></div>`).join("");
+      $("close").innerHTML=`<div class="grid cols4">${metric("開帳中期間",open?open.period:"—","本期尚未關帳","warn")}${metric("已關帳期間",state.periods.filter(p=>p.locked).length+" 期","傳票鎖定不可異動","up")}${metric("關帳檢核",done+" / "+total,"全部完成才可鎖定",done==total?"up":"warn")}${metric("稽核軌跡",state.audit.length+" 筆","誰、何時、改了什麼","info")}</div>`
+        +`<div class="split"><div class="card"><div class="head"><div><h2>期間關帳與鎖定</h2><p>關帳後該期間所有傳票鎖定，更正僅能以紅字沖銷處理。</p></div></div>${table(["會計期間","狀態","關帳人","關帳時間","操作"],prows)}<div class="head"><div><h2>本期關帳檢核清單</h2><p>2026-07 關帳前置作業，全部完成才可鎖定。</p></div></div><div class="list">${crows}</div></div>`
+        +`<div class="card"><div class="head"><div><h2>稽核軌跡（Audit Trail）</h2><p>所有異動保留操作人、時間、動作與來源，供內部稽核與會計師查核。</p></div></div><div class="pad audit">${arows}</div></div></div>`;
+    }
+    function toggleCheck(i){let c=state.closeChecklist[i];if(!c)return;c[2]=!c[2];logAudit((c[2]?"完成":"取消")+"關帳檢核："+c[0],"CLOSE-2026-07");save();render()}
+    function lockPeriod(period){if(!isRole("executive"))return toast("僅財務主管可執行關帳鎖定");
+      let p=state.periods.find(x=>x.period==period);if(!p||p.locked)return;
+      let undone=state.closeChecklist.filter(c=>!c[2]);if(undone.length)return toast(`尚有 ${undone.length} 項關帳檢核未完成，無法關帳`);
+      p.locked=true;p.status="已關帳";p.closedBy=role().name+" "+role().title;p.closedAt=nowStamp();
+      logAudit("關帳鎖定期間 "+period,"PERIOD-"+period.replace("-",""));save();render();toast(`${period} 已關帳鎖定，該期傳票不可再異動`);
+    }
+
+    function controlPage(){
+      let amrows=state.authMatrix.map(a=>[h(a[0]),h(a[1]),h(a[2]),h(a[3])]);
+      let sodrows=state.sodRules.map(s=>[h(s[0]),h(s[1]),st(s[2])]);
+      let ccrows=state.controlCycles.map(c=>[h(c[0]),h(c[1]),h(c[2]),`<button class="btn small" onclick="setPage('${c[3]}')">前往</button>`]);
+      $("control").innerHTML=`<div class="grid cols4">${metric("授權分級",state.authMatrix.length+" 級","依單據類型與金額分層","info")}${metric("SoD 檢核規則",state.sodRules.length+" 條","職能分離自動擋關","up")}${metric("內控交易循環",state.controlCycles.length+" 大循環","對映公開發行內控準則","info")}${metric("職能衝突測試","點擊示範","模擬本人核准本人請購","warn")}</div>`
+        +`<div class="card"><div class="head"><div><h2>授權分級矩陣（Authorization Matrix）</h2><p>依單據類型與金額級距決定核准層級，落實授權審核與呈報體系。</p></div></div>${table(["單據類型","金額級距","核准層級","代表人員"],amrows)}</div>`
+        +`<div class="card"><div class="head"><div><h2>職能分工（Segregation of Duties）</h2><p>申請、核准、執行、記錄、保管分離，避免舞弊與錯誤。</p></div><button class="btn primary" onclick="sodTest()">▶ 職能衝突偵測示範</button></div>${table(["SoD 控制規則","說明","狀態"],sodrows)}</div>`
+        +`<div class="card"><div class="head"><div><h2>內部控制交易循環對映</h2><p>對應《公開發行公司建立內部控制制度處理準則》主要交易循環與 ERP 控制點。</p></div></div>${table(["交易循環","流程","主要控制點","模組"],ccrows)}</div>`;
+    }
+    function sodTest(){logAudit("職能衝突偵測：王淑芬 嘗試核准本人請購 PR-260710-006 被拒","SOD-CHECK");save();render();
+      showModal("職能衝突偵測 · SoD","申請與核准分離規則",
+        `<div class="alert bad">偵測到職能衝突：使用者「王淑芬（房務領班）」為 PR-260710-006 之<strong>申請人</strong>，依 SoD 規則不得<strong>核准自己的請購單</strong>，系統已擋下此操作。</div>`
+        +`<dl class="kv"><dt>觸發規則</dt><dd>申請與核准分離</dd><dt>單據</dt><dd>PR-260710-006 床包 160 件</dd><dt>應由</dt><dd>陳美玲 房務經理（部門主管）核准</dd><dt>處置</dt><dd>操作遭拒並寫入稽核軌跡</dd></dl>`,
+        `<button class="btn" onclick="closeModal()">了解</button><button class="btn primary" onclick="closeModal();setPage('close')">查看稽核軌跡</button>`);
+    }
+
+    // ── 旅館版進銷存（移動平均計價） ──
+    function buildStockLedger(){
+      let rows=[],summary=[];
+      (state.stockCover||[]).forEach(sku=>{
+        let o=state.stockOpen[sku];if(!o)return;
+        let invRow=state.inv.find(r=>r[0]==sku),name=invRow?invRow[1]:sku,uom=invRow?invRow[5]:"";
+        let txns=state.stockTxns.filter(t=>t.sku==sku).slice().sort((a,b)=>a.date<b.date?-1:a.date>b.date?1:0);
+        let bal=o.qty,amt=o.qty*o.cost,avg=o.cost,inQ=0,inA=0,outQ=0,outA=0;
+        rows.push({date:"2026-07-01",doc:"期初",type:"期初",name,wh:o.wh,inQ:0,outQ:0,unit:avg,bal,amt,uom,batch:"",expiry:"",note:"7 月期初結存"});
+        txns.forEach(t=>{
+          let ln={date:t.date,doc:t.doc,type:t.type,name,wh:t.wh,unit:0,uom,batch:t.batch||"",expiry:t.expiry||"",note:t.note||"",inQ:0,outQ:0};
+          if(t.qty>0){let u=t.type=="調撥入"?avg:(t.unit||avg);bal+=t.qty;amt+=t.qty*u;avg=bal?amt/bal:u;ln.inQ=t.qty;ln.unit=u;if(t.type=="進貨"){inQ+=t.qty;inA+=t.qty*u}}
+          else{let q=-t.qty;bal-=q;amt-=q*avg;ln.outQ=q;ln.unit=avg;if(t.type!="調撥出"){outQ+=q;outA+=q*avg}}
+          ln.bal=bal;ln.amt=Math.round(amt);rows.push(ln);
+        });
+        let openAmt=o.qty*o.cost,endAmt=Math.round(amt),midInv=(openAmt+endAmt)/2,safety=invRow?invRow[4]:0,turnover=midInv>0?outA/midInv:0;
+        summary.push({sku,name,cat:o.cat,wh:o.wh,uom,openQty:o.qty,openAmt,inQty:inQ,inAmt:Math.round(inA),outQty:outQ,outAmt:Math.round(outA),endQty:bal,endAmt,avg,turnover,slow:turnover<0.15&&bal>safety});
+      });
+      rows.sort((a,b)=>a.date<b.date?1:a.date>b.date?-1:0);
+      return {rows,summary};
+    }
+    function stockTag(t){let cls=(t=="進貨"||t=="調撥入")?"ok":(t=="期初")?"":"info";return`<span class="status ${cls}"><span class="dot"></span>${t}</span>`}
+    function skuOptions(){return (state.stockCover||[]).map(s=>{let r=state.inv.find(x=>x[0]==s);return`<option value="${s}">${s}　${r?r[1]:""}</option>`}).join("")}
+    function stockPage(){
+      let {rows,summary}=buildStockLedger();
+      let totIn=summary.reduce((s,x)=>s+x.inAmt,0),totOut=summary.reduce((s,x)=>s+x.outAmt,0),totEnd=summary.reduce((s,x)=>s+x.endAmt,0);
+      let avgTurn=summary.length?summary.reduce((s,x)=>s+x.turnover,0)/summary.length:0,slowN=summary.filter(x=>x.slow).length;
+      let sumRows=summary.map(s=>[s.sku,h(s.name),s.wh,`${s.openQty} ${s.uom}／${money(s.openAmt)}`,`${s.inQty} ${s.uom}／${money(s.inAmt)}`,`${s.outQty} ${s.uom}／${money(s.outAmt)}`,`<b>${s.endQty} ${s.uom}</b>／${money(s.endAmt)}`,money(Math.round(s.avg)),st(s.slow?"呆滯":"正常")+` <span class="muted">${s.turnover.toFixed(2)}×</span>`]);
+      let ledRows=rows.map(r=>[r.date.slice(5),r.doc,stockTag(r.type),h(r.name),r.wh,r.inQ?`+${r.inQ}`:"",r.outQ?`-${r.outQ}`:"",money(Math.round(r.unit)),`${r.bal} ${r.uom}`,money(r.amt),r.batch?`${r.batch}${r.expiry&&r.expiry!="—"?" / "+r.expiry:""}`:"—"]);
+      let canIssue=isRole("warehouse","finance","executive"),canTrf=isRole("warehouse","executive");
+      $("stock").innerHTML=`<div class="grid cols4">${metric("本期進貨",money(totIn),"驗收入庫成本","up")}${metric("本期銷貨成本",money(totOut),"銷貨／耗用／領料 COGS","warn","cost")}${metric("期末庫存估值",money(totEnd),"移動平均後結存","up","reports")}${metric("平均週轉率",avgTurn.toFixed(2)+" 次",slowN?slowN+" 項呆滯待處理":"庫存健康",slowN?"bad":"up")}</div>`
+        +`<div class="card"><div class="head"><div><h2>進銷存彙總表</h2><p>期初 ＋ 進貨 − 銷貨／耗用 ＝ 期末，成本以移動平均計價。</p></div><div class="action-stack">${canIssue?`<button class="btn primary" onclick="openIssue()">銷貨出庫</button>`:""}${canTrf?`<button class="btn" onclick="openTransfer()">倉間調撥</button>`:""}${!canIssue&&!canTrf?`<span class="role-only-note">限倉管／財務出庫</span>`:""}</div></div>`
+        +`<div class="alert">成本計價：移動平均法（每次進貨後重算加權平均單價），銷貨／耗用以當下平均單價結轉銷貨成本。週轉率 ＝ 本期出庫成本 ÷ 平均庫存；低於 0.5× 標示為呆滯料（如空調濾網）。</div>`
+        +table(["SKU","品項","主倉別","期初(量/額)","進貨(量/額)","銷貨耗用(量/額)","期末(量/額)","移動均價","週轉/狀態"],sumRows)+`</div>`
+        +`<div class="card"><div class="head"><div><h2>庫存異動明細帳</h2><p>每筆進、銷、領、耗、調撥的流水與結存，含批號／效期，供盤點與稽核勾稽。</p></div></div>${table(["日期","單號","類型","品項","倉別","進","出","單價","結存","結存金額","批號/效期"],ledRows)}</div>`;
+    }
+    function openIssue(){if(!isRole("warehouse","finance","executive"))return toast("僅倉管／財務可辦理銷貨出庫");
+      showModal("銷貨出庫 · Goods Issue","F&B／Minibar／宴會商品銷售出庫，結轉銷貨成本",
+        `<div class="form-grid"><div class="field"><label for="isSku">品項</label><select id="isSku">${skuOptions()}</select></div><div class="field"><label for="isQty">出庫數量</label><input id="isQty" type="number" value="24"></div><div class="field"><label for="isType">出庫類型</label><select id="isType"><option>銷貨</option><option>耗用</option><option>領料</option></select></div><div class="field"><label for="isDoc">來源單號</label><input id="isDoc" value="SO-260711-060"></div><div class="field full"><label for="isNote">備註</label><input id="isNote" value="POS 銷售出庫，結轉銷貨成本"></div></div><div class="alert">出庫成本以該品項當下移動平均單價結轉：借 5401 銷貨成本／耗用，貸 存貨，並更新庫存與異動明細帳。</div>`,
+        `<button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="commitIssue()">確認出庫並過帳</button>`);
+    }
+    function commitIssue(){let sku=fieldValue("isSku"),qty=Number(fieldValue("isQty")),type=fieldValue("isType"),doc=fieldValue("isDoc")||("SO-"+nowStamp().slice(2,10).replace(/-/g,"")),note=fieldValue("isNote");
+      if(!sku||qty<=0)return toast("請填寫品項與出庫數量");
+      let o=state.stockOpen[sku],invRow=state.inv.find(x=>x[0]==sku);if(invRow&&invRow[3]<qty)return toast("庫存不足，無法出庫");
+      let s=buildStockLedger().summary.find(x=>x.sku==sku),avg=s?Math.round(s.avg):(o?o.cost:0);
+      state.stockTxns.push({date:nowStamp().slice(0,10),doc,type,sku,wh:o?o.wh:"",qty:-qty,note});
+      if(invRow)invRow[3]=Math.max(0,invRow[3]-qty);
+      addJournal(doc,(invRow?invRow[1]:sku)+" "+type+"出庫",type=="銷貨"?"5401 銷貨成本":"5101 部門耗用費用",o?o.inv:"1130 存貨",qty*avg);
+      logAudit(type+"出庫 "+qty+" @均價 "+money(avg),doc);save();closeModal();render();toast(`${doc} 已出庫 ${qty}，銷貨成本 ${money(qty*avg)} 已過帳`);
+    }
+    function openTransfer(){if(!isRole("warehouse","executive"))return toast("僅倉管／主管可辦理調撥");
+      showModal("倉間調撥 · Transfer","不改變存貨總量，於倉別間移轉並留痕",
+        `<div class="form-grid"><div class="field"><label for="trSku">品項</label><select id="trSku">${skuOptions()}</select></div><div class="field"><label for="trQty">調撥數量</label><input id="trQty" type="number" value="60"></div><div class="field"><label for="trFrom">來源倉</label><input id="trFrom" value="中央倉"></div><div class="field"><label for="trTo">目的倉</label><input id="trTo" value="Minibar 倉"></div></div><div class="alert">調撥不影響存貨總量與損益，僅移轉倉別；系統以調撥出／調撥入兩筆異動留痕。</div>`,
+        `<button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="commitTransfer()">確認調撥</button>`);
+    }
+    function commitTransfer(){let sku=fieldValue("trSku"),qty=Number(fieldValue("trQty")),from=fieldValue("trFrom"),to=fieldValue("trTo");
+      if(!sku||qty<=0||!from||!to)return toast("請完整填寫調撥資料");
+      let doc="TRF-"+nowStamp().slice(2,10).replace(/-/g,"")+"-"+String(1000+state.stockTxns.length).slice(-3);
+      state.stockTxns.push({date:nowStamp().slice(0,10),doc,type:"調撥出",sku,wh:from,qty:-qty,note:`${from} → ${to} 調撥`});
+      state.stockTxns.push({date:nowStamp().slice(0,10),doc,type:"調撥入",sku,wh:to,qty:qty,note:`${to} 收到調撥`});
+      logAudit("倉間調撥 "+qty+" "+from+"→"+to,doc);save();closeModal();render();toast(`${doc} 已調撥 ${qty}（${from} → ${to}）`);
+    }
+
     $("resetBtn").onclick=()=>{localStorage.removeItem(KEY);state=structuredClone(seed);hydrateDemo(state);window.procTab="work";window.reportTab="pl";save();render();toast("Demo 資料已重設")};
     $("closeModal").onclick=closeModal;
     $("modalBg").onclick=e=>{if(e.target==e.currentTarget)closeModal()};
