@@ -2429,17 +2429,52 @@ function hcmXSuppRatio(){var er=state.hcmEmployers||{};return er.suppBonusRatio|
       logAudit("代扣 "+b.name+" 單筆給付 "+money(b.amount)+" 二代健保補充保費 "+money(c.supp),doc);
       save();closeModal();render();toast(b.name+" 已代扣補充保費 "+money(c.supp)+" 並過帳");
     }
-    function openCreate(){var mk=(fn,title,desc,primary)=>`<button class="btn${primary?" primary":""}" style="display:block;text-align:left;height:auto;padding:12px 14px;white-space:normal" onclick="closeModal();${fn}">${title}<br><span class="muted" style="font-weight:400;font-size:11px">${desc}</span></button>`;
-      showModal("＋ 新增單據","請購與領料為需求起點；詢價、採購單、驗收、發票由 Procure-to-Pay 流程逐步轉入與過帳。",
-        `<div class="grid cols2">`
-        +mk("openNewPr()","請購單 PR","部門提出採購需求，主管簽核後轉詢價比價",1)
-        +mk("openNewStoreReq()","領料單","向中央倉領用庫存，庫存不足自動轉請購",1)
-        +mk("window.procTab='source';setPage('procure')","詢價單 RFQ","由已核准請購建立三家比價（採購經理）",0)
-        +mk("window.procTab='pr';setPage('procure')","採購單 PO ／ 驗收 GRN","由詢價決選與到貨驗收建立與過帳",0)
-        +mk("setPage('ar')","應收收款 ／ 開票","City Ledger、OTA、信用卡帳款登錄收款",0)
-        +mk("setPage('ap')","應付付款","供應商發票三方比對後付款過帳",0)
-        +`</div><div class="alert">飯店 Procure-to-Pay 閉環：領料 → 請購 PR → 詢價 RFQ → 採購單 PO → 驗收 GRN → 三方比對 → 應付 AP → 付款。每一步都是真實建立與過帳，並產生分錄與稽核軌跡。</div>`,
-        `<button class="btn" onclick="closeModal()">關閉</button>`);}
+    function openCreate(){var mk=function(fn,title,desc){return '<button class="btn" style="display:block;text-align:left;height:auto;padding:12px 14px;white-space:normal;width:100%" onclick="closeModal();'+fn+'"><b>'+title+'</b><br><span class="muted" style="font-weight:400;font-size:11px">'+desc+'</span></button>'};
+      var hd=function(t){return '<div class="head" style="padding:10px 0 4px;border:0"><h2 style="font-size:12px;letter-spacing:.04em;color:#525252">'+t+'</h2></div>'};
+      showModal("＋ 新增單據 ／ 主檔","專業 ERP 建檔中心：交易單據、財務傳票與主檔皆可直接建立、過帳並留稽核（不受目前身分限制）。",
+        hd("交易單據")+'<div class="grid cols3">'
+        +mk("ncPr()","請購單 PR","部門採購需求 → 簽核 → 詢價")
+        +mk("ncStoreReq()","領料單","向倉庫領用庫存，不足自動轉請購")
+        +mk("ncAr()","應收 ／ 開票","City Ledger、通路帳款開立發票")
+        +'</div>'+hd("財務")+'<div class="grid cols3">'
+        +mk("ncJournal()","手動傳票 JV","借貸分錄直接過帳總帳")
+        +mk("setPage('ap')","應付付款","供應商發票三方比對後付款")
+        +mk("setPage('close')","關帳 ／ 反結帳","期間關帳、鎖定與反結帳")
+        +'</div>'+hd("主檔")+'<div class="grid cols3">'
+        +mk("ncItem()","品項主檔","新增庫存 SKU、成本與安全量")
+        +mk("ncVendor()","供應商主檔","新增供應商、統編與付款條件")
+        +mk("ncEmp()","員工主檔","新增員工、部門與薪資")
+        +'</div><div class="alert">飯店 Procure-to-Pay 閉環：領料 → 請購 PR → 詢價 RFQ → 採購單 PO → 驗收 GRN → 三方比對 → 應付 AP → 付款。詢價/採購/驗收由請購核准後於「領料與採購」逐步轉入；其餘皆可在此直接建立。</div>',
+        '<button class="btn" onclick="closeModal()">關閉</button>');}
+    function ncItemOptions(){return state.inv.map(function(x){return '<option value="'+x[0]+'">'+x[0]+' '+h(x[1])+'</option>'}).join("")}
+    function ncPr(){showModal("新增請購單 PR","部門提出採購需求，建立後於採購模組簽核推進",
+        '<div class="form-grid"><div class="field"><label>品項</label><select id="ncPrSku">'+ncItemOptions()+'</select></div><div class="field"><label>需求數量</label><input id="ncPrQty" type="number" value="100"></div><div class="field"><label>需求日期</label><input id="ncPrDate" type="date" value="2026-07-20"></div><div class="field"><label>申請部門</label><select id="ncPrDept"><option>Housekeeping</option><option>F&B</option><option>Minibar</option><option>Engineering</option><option>Linen</option></select></div><div class="field full"><label>用途說明</label><textarea id="ncPrPurpose">補充庫存因應住房需求</textarea></div></div>',
+        '<button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="ncPrCommit()">建立請購單</button>')}
+    function ncPrCommit(){var sku=fieldValue("ncPrSku"),qty=Number(fieldValue("ncPrQty")),date=fieldValue("ncPrDate"),dept=fieldValue("ncPrDept"),purpose=fieldValue("ncPrPurpose");if(!sku||qty<=0)return toast("請選品項並輸入數量");var inv=state.inv.find(function(x){return x[0]==sku});var id=nextDocument("PR",state.req);var r={id:id,source:"MANUAL",property:(state.activeProperty&&state.activeProperty!="ALL")?propName():"台北示範館",dept:dept,costCenter:dept.toUpperCase(),requester:role().name,needDate:date,budget:"5101 採購預算",budgetAvailable:200000,purpose:purpose,priority:"一般",status:"待部門主管核准",rfqId:"",poId:"",invoiceId:"",attachments:[],comments:[],item:{sku:sku,name:inv?inv[1]:sku,spec:"依品項主檔規格",qty:qty,approvedQty:0,uom:inv?inv[5]:"件",unitPrice:inv?inv[6]:0,onHand:inv?inv[3]:0,safety:inv?inv[4]:0,onOrder:0},approval:[[nowStamp(),role().name,"送出請購"]]};state.req.unshift(r);logAudit("建立請購單 "+id+"（"+(inv?inv[1]:sku)+" ×"+qty+"）",id);save();closeModal();window.procTab="pr";setPage("procure");toast(id+" 已建立，狀態：待部門主管核准")}
+    function ncStoreReq(){showModal("新增領料單","向倉庫領用庫存，庫存不足自動轉請購",
+        '<div class="form-grid"><div class="field"><label>品項</label><select id="ncSrSku">'+ncItemOptions()+'</select></div><div class="field"><label>領用數量</label><input id="ncSrQty" type="number" value="24"></div><div class="field"><label>部門</label><select id="ncSrDept"><option>Housekeeping</option><option>F&B</option><option>Minibar</option><option>Engineering</option></select></div><div class="field full"><label>用途</label><input id="ncSrPurpose" value="樓層備品補充"></div></div>',
+        '<button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="ncStoreReqCommit()">建立領料單</button>')}
+    function ncStoreReqCommit(){var sku=fieldValue("ncSrSku"),qty=Number(fieldValue("ncSrQty")),dept=fieldValue("ncSrDept");if(!sku||qty<=0)return toast("請選品項與數量");var inv=state.inv.find(function(x){return x[0]==sku});var short=inv&&inv[3]<qty;var id=nextDocument("SR",state.storeReq);var sr={id:id,property:"台北示範館",dept:dept,costCenter:dept.toUpperCase(),requester:role().name,warehouse:"中央倉",date:"2026-07-12",purpose:fieldValue("ncSrPurpose"),status:short?"庫存不足":"待發料",linkedPr:"",line:{sku:sku,name:inv?inv[1]:sku,qty:qty,issued:0,shortage:short?qty-inv[3]:0,uom:inv?inv[5]:"件"},history:[["2026-07-12 09:00",role().name,"送出領料申請"]]};state.storeReq.unshift(sr);logAudit("建立領料單 "+id,id);save();closeModal();window.procTab="work";setPage("procure");toast(id+" 領料單已建立")}
+    function ncAr(){showModal("新增應收 ／ 開票","建立 City Ledger／通路應收並開立發票",
+        '<div class="form-grid"><div class="field"><label>客戶／來源</label><input id="ncArCust" placeholder="例：宏曜電子股份有限公司"></div><div class="field"><label>類型</label><select id="ncArType"><option>Corporate City Ledger</option><option>OTA AR</option><option>Credit Card AR</option><option>Travel Agent AR</option><option>Banquet AR</option></select></div><div class="field"><label>金額（含稅）</label><input id="ncArAmt" type="number" value="50000"></div><div class="field"><label>到期日</label><input id="ncArDue" type="date" value="2026-08-10"></div></div>',
+        '<button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="ncArCommit()">建立應收並開票</button>')}
+    function ncArCommit(){var cust=fieldValue("ncArCust"),amt=Number(fieldValue("ncArAmt")),due=fieldValue("ncArDue"),type=fieldValue("ncArType");if(!cust||amt<=0)return toast("請填客戶與金額");var id="CL-2607-"+String(100+state.ar.length).slice(-3);var inv="AB"+String(20000000+Math.round(amt)).slice(0,8);state.ar.unshift([id,cust,type,amt,due,0,inv,"待付款"]);addJournal(id,cust+" 開立應收","1201 應收帳款","4101 營業收入",amt);logAudit("建立應收/開票 "+id+" "+cust+" "+money(amt),id);save();closeModal();setPage("ar");toast(id+" 應收已建立並開票 "+inv)}
+    function ncJournal(){showModal("新增手動傳票 JV","借貸分錄，過帳寫入總帳（受期間鎖控管）",
+        '<div class="form-grid"><div class="field full"><label>摘要</label><input id="ncJvMemo" placeholder="例：預付租金當月攤提"></div><div class="field"><label>借方科目</label><input id="ncJvDr" value="6201 租金費用"></div><div class="field"><label>貸方科目</label><input id="ncJvCr" value="1251 預付費用"></div><div class="field"><label>金額</label><input id="ncJvAmt" type="number" value="180000"></div></div><div class="alert">過帳前系統檢查會計期間；若期間已硬關帳將被擋下（見關帳中心）。</div>',
+        '<button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="ncJvCommit()">過帳傳票</button>')}
+    function ncJvCommit(){var memo=fieldValue("ncJvMemo"),amt=Number(fieldValue("ncJvAmt")),dr=fieldValue("ncJvDr"),cr=fieldValue("ncJvCr");if(!memo||amt<=0||!dr||!cr)return toast("請完整填寫摘要、金額與借貸科目");var doc="JV-260712-"+String(1000+state.journal.length).slice(-3);var n=state.journal.length;addJournal(doc,memo,dr,cr,amt);if(state.journal.length===n)return;logAudit("手動傳票過帳 "+doc+" "+money(amt),doc);save();closeModal();setPage("gl");toast(doc+" 已過帳寫入總帳")}
+    function ncItem(){showModal("新增品項主檔","建立庫存 SKU，寫入庫存與進銷存",
+        '<div class="form-grid"><div class="field"><label>SKU</label><input id="ncItSku" placeholder="例：HK-AMN-010"></div><div class="field"><label>品名</label><input id="ncItName"></div><div class="field"><label>分類</label><select id="ncItCat"><option>Housekeeping Supplies</option><option>Linen</option><option>F&B</option><option>Minibar</option><option>Maintenance</option></select></div><div class="field"><label>單位</label><input id="ncItUom" value="件"></div><div class="field"><label>期初庫存</label><input id="ncItQty" type="number" value="0"></div><div class="field"><label>安全庫存</label><input id="ncItSafety" type="number" value="0"></div><div class="field"><label>成本單價</label><input id="ncItCost" type="number" value="0"></div><div class="field"><label>主要供應商</label><input id="ncItVendor"></div></div>',
+        '<button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="ncItemCommit()">建立品項</button>')}
+    function ncItemCommit(){var sku=fieldValue("ncItSku"),name=fieldValue("ncItName");if(!sku||!name)return toast("請填 SKU 與品名");if(state.inv.some(function(x){return x[0]==sku}))return toast("SKU 已存在");state.inv.push([sku,name,fieldValue("ncItCat"),Number(fieldValue("ncItQty"))||0,Number(fieldValue("ncItSafety"))||0,fieldValue("ncItUom")||"件",Number(fieldValue("ncItCost"))||0,fieldValue("ncItVendor")||"—"]);logAudit("建立品項主檔 "+sku+" "+name,sku);save();closeModal();setPage("inventory");toast(sku+" 品項已建立")}
+    function ncVendor(){showModal("新增供應商主檔","建立供應商、統編與付款條件",
+        '<div class="form-grid"><div class="field"><label>供應商名稱</label><input id="ncVdName"></div><div class="field"><label>統一編號</label><input id="ncVdTax" placeholder="8 碼"></div><div class="field"><label>類別</label><select id="ncVdCat"><option>房務備品</option><option>布草洗滌</option><option>餐飲食材</option><option>Minibar</option><option>工程機電</option></select></div><div class="field"><label>付款條件</label><select id="ncVdTerm"><option>月結 30 天</option><option>月結 15 天</option><option>貨到付款</option><option>預付</option></select></div></div>',
+        '<button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="ncVendorCommit()">建立供應商</button>')}
+    function ncVendorCommit(){var name=fieldValue("ncVdName");if(!name)return toast("請填供應商名稱");var id="SUP-"+String(1000+state.customers.length).slice(-3);state.customers.push([id,name,"Supplier · "+fieldValue("ncVdCat")+" · "+fieldValue("ncVdTerm"),0,0,"AP / Procurement"]);logAudit("建立供應商主檔 "+name+"（"+fieldValue("ncVdTax")+"）",id);save();closeModal();setPage("masters");toast(name+" 供應商已建立")}
+    function ncEmp(){showModal("新增員工主檔","建立員工、部門與薪資基本資料",
+        '<div class="form-grid"><div class="field"><label>姓名</label><input id="ncEmName"></div><div class="field"><label>部門</label><select id="ncEmDept"><option>Front Office</option><option>Housekeeping</option><option>F&B</option><option>Engineering</option><option>Accounting</option></select></div><div class="field"><label>職務</label><input id="ncEmTitle"></div><div class="field"><label>薪資類型</label><select id="ncEmType"><option>月薪</option><option>時薪</option></select></div><div class="field"><label>底薪／時薪</label><input id="ncEmBase" type="number" value="40000"></div></div>',
+        '<button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="ncEmpCommit()">建立員工</button>')}
+    function ncEmpCommit(){var name=fieldValue("ncEmName");if(!name)return toast("請填姓名");var id="E"+String(10+state.emp.length).slice(-2);state.emp.push([id,name,fieldValue("ncEmDept"),fieldValue("ncEmTitle")||"職員",fieldValue("ncEmType"),Number(fieldValue("ncEmBase"))||0,176,0]);logAudit("建立員工主檔 "+name,id);save();closeModal();setPage("hr");toast(name+" 員工已建立")}
 
     // ── P2 增強函式 ──
 function assetsXExtra(){
