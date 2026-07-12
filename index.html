@@ -154,7 +154,7 @@
     function setPage(id){state.active=id;save();render()}function header(){let p=pages.find(x=>x[0]==state.active);$("pageTitle").textContent=p[2];$("pageSub").textContent=p[3]}function metric(a,b,c,cls="",go=""){return`<div class="card pad metric ${go?"click":""}" ${go?`onclick="setPage('${go}')"`:""}><div class="label">${a}</div><div class="value">${b}</div><div class="delta ${cls}">${c}</div></div>`}
     function overview(){let q=`<div class="grid cols4">${metric("City Ledger AR",money(arAmt()),`${openAr()} 筆待處理`,"warn","ar")}${metric("Open AP",money(apAmt()),`${openAp()} 筆供應商/費用`,"warn","ap")}${metric("低庫存品項",low().length+" 項","可自動產生請購","bad","inventory")}${metric("GOP",money(gp()),"毛利率 "+(gp()/rev()*100).toFixed(1)+"%","up","reports")}</div><div class="split"><div class="card"><div class="head"><div><h2>飯店 ERP 閉環 Demo 流程</h2><p>PMS / VenueOS 交易如何轉為 AR、AP、庫存、成本中心、總帳與三大報表。</p></div><button class="btn primary" onclick="runNext()">▶ 執行下一步</button></div><div class="flow">${steps.map((s,i)=>`<div class="step ${i<state.loopStep?"done":i==state.loopStep?"active":""}"><div class="no">${i+1}</div><div><strong>${s[0]}</strong><span>${s[1]}</span></div>${i<state.loopStep?st("完成"):i==state.loopStep?`<button class="btn" onclick="runNext()">處理</button>`:st("待處理")}</div>`).join("")}</div></div><div class="card"><div class="head"><div><h2>今日 ERP 工作佇列</h2><p>不是報表展示，而是每天要處理的單據與例外。</p></div></div><div class="list">${todo("City Ledger 待開票","企業月結與宴會帳需補齊發票資料","ar")}${todo("旅行社逾期未收","山海旅遊 31-60 天帳款待催收","ar")}${todo("低庫存請購","低庫存品項請購可轉採購單","procure")}${todo("PO / GRN 待驗收","驗收後形成庫存、供應商發票與 AP","procure")}${todo("三大報表","AR、AP、現金、存貨與部門損益彙總","reports")}</div></div></div><div class="grid cols3">${metric("損益表",money(gp()),"Room / F&B / Banquet → GOP","","reports")}${metric("資產負債表",money(cash()+arAmt()+invVal()),"現金 + City Ledger AR + 存貨","","reports")}${metric("現金流量表",money(cash()),"信用卡入帳、OTA 撥款、企業收款、供應商付款","","reports")}</div>`;$("overview").innerHTML=q}
     function todo(a,b,go){return`<div class="task" onclick="setPage('${go}')"><span>${st("待處理")}</span><div><strong>${a}</strong><span>${b}</span></div><button class="btn">查看</button></div>`}
-    function sync(){ $("sync").innerHTML=`<div class="grid cols4">${metric("最後同步",state.lastSync.slice(11),state.lastSync.slice(0,10),"up")}${metric("今日資料量",state.syncLog.reduce((s,x)=>s+x[2],0).toLocaleString("zh-TW"),"訂房/會員/票券/房晚","up")}${metric("待補件","3 筆","缺發票號或客戶統編","warn")}${metric("同步來源","5 類","會員、訂房、票券、月結、房晚","up")}</div><div class="card"><div class="head"><div><h2>VenueOS → ERP 資料來源</h2><p>ERP 不重做 VenueOS，負責把前台資料轉為後勤單據與會計資料。</p></div><button class="btn primary" onclick="simulateSync()">⇄ 立即同步</button></div>${table(["同步單號","來源","筆數","時間","狀態","ERP 影響"],state.syncLog.map(x=>[x[0],x[1],x[2],x[4],st(x[3]),x[5]]))}</div>`}
+    function sync(){ $("sync").innerHTML=`<div class="grid cols4">${metric("最後同步",state.lastSync.slice(11),state.lastSync.slice(0,10),"up")}${metric("今日資料量",state.syncLog.reduce((s,x)=>s+x[2],0).toLocaleString("zh-TW"),"訂房/會員/票券/房晚","up")}${metric("待補件","3 筆","缺發票號或客戶統編","warn")}${metric("同步來源","5 類","會員、訂房、票券、月結、房晚","up")}</div><div class="card"><div class="head"><div><h2>VenueOS → ERP 資料來源</h2><p>ERP 不重做 VenueOS，負責把前台資料轉為後勤單據與會計資料。</p></div><div class="action-stack"><button class="btn" onclick="openManualTxn()">＋ 手動新增交易</button><button class="btn primary" onclick="simulateSync()">⇄ 立即同步</button></div></div>${table(["同步單號","來源","筆數","時間","狀態","ERP 影響"],state.syncLog.map(x=>[x[0],x[1],x[2],x[4],st(x[3]),x[5]]))}</div>`}
     function finance(){ $("finance").innerHTML=`<div class="grid cols4">${metric("待開票",state.ar.filter(x=>x[7]=="待開票"||x[6]=="缺發票").length+" 筆","來源：應收帳款","warn","ar")}${metric("待收款",money(arAmt()),"含逾期與總部審核","warn","ar")}${metric("待付款",money(apAmt()),"供應商與薪資","warn","ap")}${metric("本期現金",money(cash()),"收款扣除付款與薪資","up","reports")}</div><div class="card"><div class="head"><div><h2>會計工作台</h2><p>把 ERP 單據轉為發票、收付款、傳票與關帳資料。</p></div></div>${table(["事項","單據","金額","狀態","操作"],[...state.ar.slice(0,4).map(x=>[x[1]+" · "+x[2],x[0],money(x[3]),st(x[7]),`<button class="btn" onclick="openDoc('ar','${x[0]}')">明細</button>`]),...state.ap.map(x=>[x[1]+" · "+x[2],x[0],money(x[3]),st(x[5]),`<button class="btn" onclick="openDoc('ap','${x[0]}')">明細</button>`])])}</div>`}
     function ar(){ $("ar").innerHTML=`<div class="grid cols4">${metric("應收餘額",money(arAmt()),`${openAr()} 筆未結`,"warn")}${metric("逾期帳款",money(state.ar.filter(x=>x[7]=="逾期").reduce((s,x)=>s+x[3],0)),"需催款","bad")}${metric("待開票",state.ar.filter(x=>x[7]=="待開票"||x[6]=="缺發票").length+" 筆","缺發票或統編","warn")}${metric("已收款",money(state.ar.filter(x=>x[7]=="已收款").reduce((s,x)=>s+x[3],0)),"回寫現金流","up")}</div><div class="card"><div class="head"><div><h2>應收帳款閉環</h2><p>VenueOS 交易 → AR → 發票 → 帳齡 → 收款 → 傳票 → 報表。</p></div></div>${table(["AR 單號","客戶","來源","金額","到期日","狀態","操作"],state.ar.map(x=>[x[0],x[1],x[2],money(x[3]),x[4],st(x[7]),x[7]!="已收款"?`<button class="btn" onclick="collectAr('${x[0]}')">收款</button>`:""]))}</div>`}
     function ap(){ $("ap").innerHTML=`<div class="grid cols4">${metric("應付餘額",money(apAmt()),`${openAp()} 筆未付款`,"warn")}${metric("待發票",state.ap.filter(x=>x[5]=="待發票").length+" 筆","GRN 已收貨，待供應商發票","warn")}${metric("待付款",state.ap.filter(x=>x[5]=="待付款").length+" 筆","影響現金流","warn")}${metric("已付款",money(state.ap.filter(x=>x[5]=="已付款").reduce((s,x)=>s+x[3],0)),"已沖應付","up")}</div><div class="card"><div class="head"><div><h2>應付帳款閉環</h2><p>採購單 → 到貨驗收 → 供應商發票 → AP Voucher → 付款。</p></div></div>${table(["AP 單號","供應商","來源單據","金額","付款日","狀態","操作"],state.ap.map(x=>[x[0],x[1],x[2],money(x[3]),x[4],st(x[5]),x[5]=="待付款"?`<button class="btn" onclick="payAp('${x[0]}')">付款</button>`:""]))}</div>`}
@@ -2569,6 +2569,7 @@ function hcmXSuppRatio(){var er=state.hcmEmployers||{};return er.suppBonusRatio|
         +mk("ncPr()","請購單 PR","部門採購需求 → 簽核 → 詢價")
         +mk("ncStoreReq()","領料單","向倉庫領用庫存，不足自動轉請購")
         +mk("ncAr()","應收 ／ 開票","City Ledger、通路帳款開立發票")
+        +mk("openManualTxn()","手動交易","現場 walk-in／整合斷線時補登前台交易")
         +'</div>'+hd("財務")+'<div class="grid cols3">'
         +mk("ncJournal()","手動傳票 JV","借貸分錄直接過帳總帳")
         +mk("setPage('ap')","應付付款","供應商發票三方比對後付款")
@@ -3493,6 +3494,40 @@ function adminReviseDoc(id){let d=(state.adminDocs||[]).find(x=>x.id===id);if(!d
         +'<div class="card"><div class="head"><div><h2>如何建立單據</h2><p>點右上藍色「＋新增單據」。</p></div></div><div class="pad"><div class="alert">建檔中心分四類、不受角色限制、皆真實寫入並過帳：<br><b>交易單據</b>：請購單／領料單／應收開票<br><b>財務</b>：手動傳票／付款／關帳<br><b>主檔</b>：品項／供應商／員工<br><b>業務·行政</b>：客戶／電子簽呈／發布公告</div><p class="muted" style="margin:10px 0 0;line-height:1.65">採購鏈：領料 → 請購 PR → 詢價 RFQ → 採購單 PO → 驗收 GRN → 三方比對 → 應付 AP → 付款，每步真實建立與過帳並留稽核。</p></div></div></div>'
         +'<div class="card"><div class="head"><div><h2>模組總覽（依選單分類，點即前往）</h2></div></div><div class="pad">'+grpDir+'</div></div>'
         +'<div class="card"><div class="head"><div><h2>合規與進階亮點</h2></div></div><div class="pad"><dl class="kv"><dt>收入認列</dt><dd>IFRS 15 合約負債（訂金／套裝／會員積分遞延）</dd><dt>租賃・資產</dt><dd>IFRS 16 使用權資產、固定資產折舊、AUC 分階段結算</dd><dt>採購付款</dt><dd>三方比對容差自動放行、Hold／Release、折讓紅字沖銷</dd><dt>關帳</dt><dd>軟關帳／硬關帳／反結帳、過帳期間鎖</dd><dt>稅務</dt><dd>電子發票開立上傳存證、折讓作廢倒數、401 媒體檔</dd><dt>多物業</dt><dd>各館 P&L、集團合併、內部交易沖銷、委託管理費</dd><dt>內控</dt><dd>SoD 職能分工、授權分級矩陣、變更文件、稽核軌跡</dd></dl></div></div>';
+    }
+    // -- 手動新增交易 (PMS 補登) --
+    function openManualTxn(){
+      showModal("手動新增交易 · Manual Transaction","整合斷線、walk-in、調整或補登時，於此手動登錄前台交易，系統即產生分錄與應收。",
+        '<div class="form-grid"><div class="field"><label>營業日期</label><input id="mtDate" type="date" value="2026-07-12"></div><div class="field"><label>交易類型</label><select id="mtType"><option>房租收入</option><option>餐飲收入</option><option>宴會收入</option><option>其他營業收入</option><option>預收訂金</option></select></div><div class="field"><label>入帳方式</label><select id="mtPay"><option>現金</option><option>信用卡</option><option>City Ledger 掛帳</option><option>OTA 撥款</option><option>旅行社月結</option><option>官網預收</option></select></div><div class="field"><label>金額（含稅）</label><input id="mtAmt" type="number" value="12000"></div><div class="field full"><label>客戶／來源</label><input id="mtCust" value="現場入住 walk-in"></div><div class="field full"><label>說明</label><input id="mtNote" value="手動補登前台交易"></div></div><div class="alert">送出後：現金／信用卡 → 直接入帳並認列收入；掛帳／OTA／旅行社 → 建立應收帳款 AR；預收訂金 → 列合約負債（IFRS 15 遞延）。含稅金額自動拆 5% 銷項稅。</div>',
+        '<button class="btn" onclick="closeModal()">取消</button><button class="btn primary" onclick="commitManualTxn()">登錄交易並過帳</button>');
+    }
+    function commitManualTxn(){
+      var type=fieldValue("mtType"),pay=fieldValue("mtPay"),amt=Number(fieldValue("mtAmt")),cust=fieldValue("mtCust")||"手動交易",note=fieldValue("mtNote");
+      if(amt<=0)return toast("請輸入金額");
+      var net=Math.round(amt/1.05),tax=amt-net,t=nowStamp().slice(11);
+      var id="MANUAL-260712-"+String(100+state.syncLog.length).slice(-3);
+      var acctRev=type=="房租收入"?"4101 客房收入":type=="餐飲收入"?"4201 餐飲收入":type=="宴會收入"?"4301 宴會收入":"4901 其他營業收入";
+      var impact="";
+      if(type=="預收訂金"||pay=="官網預收"){
+        addJournal(id,cust+" 預收訂金","1102 銀行存款","2171 合約負債－預收訂金",amt);
+        impact="列合約負債（IFRS 15 遞延），入住時認列收入";
+      }else if(pay=="現金"){
+        addJournal(id,cust+" "+type,"1101 現金",acctRev,net);
+        if(tax)addJournal(id+"-T",cust+" 銷項稅額","1101 現金","2141 銷項稅額",tax);
+        impact="現金入帳並認列收入 "+money(net);
+      }else{
+        var src=pay=="信用卡"?"Credit Card AR":pay=="OTA 撥款"?"OTA AR":pay=="旅行社月結"?"Travel Agent AR":"Corporate City Ledger";
+        var arId="CL-2607-"+String(100+state.ar.length).slice(-3);
+        var due=pay=="信用卡"?"2026-07-14":"2026-08-11";
+        state.ar.unshift([arId,cust,src+" · 手動登錄",amt,due,0,"AB"+String(20000000+Math.round(amt)).slice(0,8),"待付款"]);
+        addJournal(id,cust+" "+type+"（"+pay+"）","1201 應收帳款",acctRev,net);
+        if(tax)addJournal(id+"-T",cust+" 銷項稅額","1201 應收帳款","2141 銷項稅額",tax);
+        impact="建立應收 "+arId+"（"+src+"）並認列收入";
+      }
+      state.syncLog.unshift([id,"手動新增交易 · "+type,1,"success",t,cust+"｜"+pay+"｜"+money(amt)+"　→ "+impact]);
+      state.lastSync="2026-07-12 "+t;
+      logAudit("手動新增交易 "+type+" "+money(amt)+"（"+pay+"）",id);
+      save();closeModal();render();toast(id+" 交易已登錄並過帳（"+impact+"）");
     }
     $("resetBtn").onclick=()=>{localStorage.removeItem(KEY);state=structuredClone(seed);hydrateDemo(state);window.procTab="work";window.reportTab="pl";save();render();toast("Demo 資料已重設")};
     $("createBtn").onclick=openCreate;
